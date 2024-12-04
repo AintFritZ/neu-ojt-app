@@ -6,7 +6,7 @@ import {
   semesterOptions,
   generateSchoolYearOptions,
   courseOptions,
-} from '../Context/Options';
+} from '../../Lib/Options';
 
 const StudentInfo = () => {
   const { user, updateUser } = useUser(); // Use updateUser here
