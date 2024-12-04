@@ -9,19 +9,21 @@ const MainUI = () => {
   const router = useRouter();
 
   const onLogout = () => {
-    router.push('/');
+    router.push('/'); // Log out and redirect to home
   };
 
   const handleClick = (boxName) => {
     if (boxName === 'Upload Requirements') {
-      router.push('/Views/UploadRequirements'); // Navigate to the Upload Requirements page
+      router.push('/Views/UploadRequirements');
+    } else if (boxName === 'Student Info') {
+      router.push('/Views/StudentInfo');
     } else {
       alert(`You clicked on ${boxName}`);
     }
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Loading state until user data is available
   }
 
   return (
