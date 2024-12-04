@@ -56,6 +56,9 @@ const StudentInfo = () => {
     router.push('/Views/MainUI');
   };
 
+  // Ensure user data exists and profile picture is available before rendering
+  const profilePicture = user?.profilePicture || '/default-profile-pic.jpg';  // Fallback profile picture
+
   return (
     <div className={styles.container}>
       {/* Header Bar */}
@@ -63,13 +66,13 @@ const StudentInfo = () => {
         <div className={styles.leftHeaderContent}>
           <div className={styles.profile}>
             <div className={styles.profileImagePlaceholder}>
-              {user.profilePicture ? (
-                <img src={user.profilePicture} alt="Profile" className={styles.profileImage} />
+              {user?.profilePicture ? (
+                <img src={profilePicture} alt="Profile" className={styles.profileImage} />
               ) : (
                 <div className={styles.profileImagePlaceholderText}>U</div>
               )}
             </div>
-            <span className={styles.profileName}>{user.name || 'Guest'}</span>
+            <span className={styles.profileName}>{user?.name || 'Guest'}</span>
           </div>
         </div>
         <div className={styles.centerHeaderContent}>
