@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useUser  } from '../Context/UserContext';
+import { useUser } from '../Context/UserContext';
 import styles from '../../styles/UploadRequirement.module.css'; 
 
 const UploadRequirements = () => {
   const [files, setFiles] = useState({});
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
-  const { user } = useUser ();
+  const { user } = useUser();
 
   const handleFileUpload = async (event, key) => {
     const file = event.target.files[0];
@@ -48,6 +48,11 @@ const UploadRequirements = () => {
   useEffect(() => {
     // Prevent any mismatches during SSR
   }, []);
+
+  if (!user) {
+    // Prevent rendering until the user context is available
+    return null; 
+  }
 
   return (
     <div className={styles.container}>
