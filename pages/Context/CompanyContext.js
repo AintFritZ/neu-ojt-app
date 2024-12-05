@@ -1,3 +1,4 @@
+// pages/Context/CompanyContext.js
 import React, { createContext, useContext, useState } from 'react';
 
 const CompanyContext = createContext();
@@ -30,3 +31,7 @@ export const CompanyProvider = ({ children }) => {
 };
 
 export const useCompany = () => useContext(CompanyContext);
+
+// Default export as a dummy component to prevent Next.js page-related error
+const CompanyContextPage = () => null;
+export default CompanyContextPage;
