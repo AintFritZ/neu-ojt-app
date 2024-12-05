@@ -92,7 +92,6 @@
   transition: background-color 0.3s;
 }
 
-/* Box Container */
 .boxContainer {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -103,7 +102,6 @@
   justify-content: center;
 }
 
-/* Box style */
 .box {
   display: flex;
   align-items: center;
@@ -118,45 +116,40 @@
   transition: background-color 0.3s;
 }
 
-/* Form Styles */
 .formWrapper {
-  background-color: #333333;  /* Same as header color */
-  padding: 30px;  /* Padding around the form */
-  border-radius: 8px;  /* Rounded corners */
-  width: 90%;  /* Adjust width */
-  max-width: 700px;  /* Maximum width to prevent overflow */
-  margin: 20px auto;  /* Centers the form on the page */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Optional: Add shadow for better visibility */
+  background-color: #333333;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 700px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Input and Select Boxes */
 .input, .select {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%;  /* Ensure inputs take the full width within the form */
-  max-width: 500px;  /* Set a max-width to prevent them from becoming too wide */
-  margin-bottom: 15px; /* Add margin to the bottom for spacing */
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 15px;
 }
 
-/* Row Layout */
 .row {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  justify-content: center;  /* Ensures elements are centered */
-  margin-bottom: 20px; /* Add margin to the bottom of each row for spacing */
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-/* Label Styles */
 .label {
   font-size: 14px;
   font-weight: bold;
   margin-right: 10px;
 }
 
-/* Submit Button */
 .button {
   padding: 10px 20px;
   background-color: #333;

@@ -1,22 +1,21 @@
-// pages/Views/UploadRequirements.js
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useUser } from '../Context/UserContext';
-import styles from '../../styles/UploadRequirement.module.css';
+import { useUser  } from '../Context/UserContext';
+import styles from '../../styles/UploadRequirement.module.css'; 
 
 const UploadRequirements = () => {
   const [files, setFiles] = useState({});
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
-  const { user } = useUser();
+  const { user } = useUser ();
 
   const handleFileUpload = async (event, key) => {
     const file = event.target.files[0];
-    if (file && file.type === 'application/pdf') {
+    if (file && file.type === "application/pdf") {
       setUploading(true);
       try {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
         const response = await fetch('/api/uploadFile', {
           method: 'POST',
@@ -38,21 +37,17 @@ const UploadRequirements = () => {
         setUploading(false);
       }
     } else {
-      alert('Please upload a valid PDF file.');
+      alert("Please upload a valid PDF file.");
     }
   };
 
   const handleBackClick = () => {
-    router.push('/Views/MainUI'); // Navigate back to Main UI
+    router.push('/Views/MainUI');
   };
 
   useEffect(() => {
     // Prevent any mismatches during SSR
   }, []);
-
-  if (!user) {
-    return <div>Loading...</div>; // Loading state until user data is available
-  }
 
   return (
     <div className={styles.container}>
@@ -62,11 +57,7 @@ const UploadRequirements = () => {
           <div className={styles.profile}>
             <div className={styles.profileImagePlaceholder}>
               {user.profilePicture ? (
-                <img
-                  src={user.profilePicture}
-                  alt="Profile"
-                  className={styles.profileImage}
-                />
+                <img src={user.profilePicture} alt="Profile" className={styles.profileImage} />
               ) : (
                 <div className={styles.profileImagePlaceholderText}>U</div>
               )}

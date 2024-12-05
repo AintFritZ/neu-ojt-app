@@ -11,7 +11,8 @@ export const UserProvider = ({ children }) => {
     if (userData) {
       setUser((prevUser) => {
         const updatedUser = { ...prevUser, ...userData };
-        // Store updated user data in localStorage
+        // Ensure profileImage exists or fallback
+        updatedUser.profileImage = updatedUser.profileImage || prevUser.profileImage;
         localStorage.setItem('user', JSON.stringify(updatedUser));
         return updatedUser;
       });
@@ -19,7 +20,7 @@ export const UserProvider = ({ children }) => {
       setUser(null); // If no user data is passed, clear user
       localStorage.removeItem('user'); // Remove user data from localStorage
     }
-  };
+  };  
 
   useEffect(() => {
     // On initial load, check if there is user data in localStorage

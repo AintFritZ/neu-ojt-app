@@ -2,14 +2,10 @@ import { useState, useEffect } from 'react';
 import { useUser } from '../Context/UserContext';
 import styles from '../../styles/StudentInfo.module.css';
 import { useRouter } from 'next/router';
-import {
-  semesterOptions,
-  generateSchoolYearOptions,
-  courseOptions,
-} from '../../Lib/Options';
+import { semesterOptions, generateSchoolYearOptions, courseOptions } from '../../Lib/Options';
 
 const StudentInfo = () => {
-  const { user, updateUser } = useUser(); // Use updateUser here
+  const { user, updateUser } = useUser();
   const [formData, setFormData] = useState({
     lastName: '',
     firstName: '',
@@ -47,27 +43,21 @@ const StudentInfo = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateUser(formData); // Call updateUser here
-    alert('Student information updated successfully!');
-    router.push('/Views/MainUI');
+    updateUser(formData);
   };
 
   const handleBackClick = () => {
     router.push('/Views/MainUI');
   };
 
-  // Ensure user data exists and profile picture is available before rendering
-  const profilePicture = user?.profilePicture || '/default-profile-pic.jpg';  // Fallback profile picture
-
   return (
     <div className={styles.container}>
-      {/* Header Bar */}
       <div className={styles.headerBar}>
         <div className={styles.leftHeaderContent}>
           <div className={styles.profile}>
             <div className={styles.profileImagePlaceholder}>
               {user?.profilePicture ? (
-                <img src={profilePicture} alt="Profile" className={styles.profileImage} />
+                <img src={user.profilePicture} alt="Profile" className={styles.profileImage} />
               ) : (
                 <div className={styles.profileImagePlaceholderText}>U</div>
               )}
@@ -83,10 +73,8 @@ const StudentInfo = () => {
         </button>
       </div>
 
-      {/* Form Container */}
       <div className={styles.formWrapper}>
         <form onSubmit={handleSubmit} className={styles.form}>
-          {/* Row 1: Last Name, First Name, Middle Name */}
           <div className={styles.row}>
             <label>
               Last Name:
@@ -120,7 +108,6 @@ const StudentInfo = () => {
             </label>
           </div>
 
-          {/* Row 2: Student Type (dropdown), Student ID, Course */}
           <div className={styles.row}>
             <label>
               Student Type:
@@ -161,7 +148,6 @@ const StudentInfo = () => {
             </label>
           </div>
 
-          {/* Row 3: Section, School Year, Semester */}
           <div className={styles.row}>
             <label>
               Section:
@@ -205,7 +191,6 @@ const StudentInfo = () => {
             </label>
           </div>
 
-          {/* Submit Button */}
           <button type="submit" className={styles.button}>
             Save
           </button>
