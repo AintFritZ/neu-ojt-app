@@ -1,15 +1,14 @@
-// pages/Views/MainUI.js
-import { useUser } from '../Context/UserContext';
+import { useUser } from '../Context/UserContext'; // Import the useUser hook
 import styles from '../../styles/Home.module.css';
-import LogOutButton from '../Components/LogOutButton';
 import { useRouter } from 'next/router';
 
 const MainUI = () => {
-  const { user } = useUser();
+  const { user, logOut } = useUser();  // Access user and logOut function from context
   const router = useRouter();
 
-  const onLogout = () => {
-    router.push('/');
+  const onLogout = async () => {
+    await logOut();  // Log out using the logOut function from context
+    router.push('/');  // Redirect to the login page
   };
 
   const handleClick = (boxName) => {
@@ -21,11 +20,13 @@ const MainUI = () => {
       router.push('/Views/UpdateCompany'); 
     } else {
       alert(`You clicked on ${boxName}`);
+      console.log('Is the user authenticated?', !!user);
+
     }
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>;  // Show loading if user data is not available
   }
 
   return (
@@ -50,7 +51,9 @@ const MainUI = () => {
           <h1>Welcome to the Main UI!</h1>
         </div>
 
-        <LogOutButton onLogout={onLogout} className={styles.logoutButton} />
+        <button onClick={onLogout} className={styles.logoutButton}>
+          Log Out
+        </button>
       </div>
 
       <div className={styles.boxContainer}>

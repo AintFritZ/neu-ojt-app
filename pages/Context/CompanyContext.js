@@ -1,8 +1,9 @@
-// pages/Context/CompanyContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
+// Create the CompanyContext
 const CompanyContext = createContext();
 
+// CompanyProvider component to manage company state
 export const CompanyProvider = ({ children }) => {
   const [company, setCompany] = useState({
     companyName: '',
@@ -10,11 +11,12 @@ export const CompanyProvider = ({ children }) => {
     companyContact: '',
   });
 
+  // Update company data
   const updateCompany = (newData) => {
     setCompany((prevCompany) => ({ ...prevCompany, ...newData }));
   };
 
-  // Function to delete company (reset to empty values)
+  // Reset company data to default values
   const deleteCompany = () => {
     setCompany({
       companyName: '',
@@ -25,13 +27,14 @@ export const CompanyProvider = ({ children }) => {
 
   return (
     <CompanyContext.Provider value={{ company, updateCompany, deleteCompany }}>
-      {children}
+      {children} {/* Render child components */}
     </CompanyContext.Provider>
   );
 };
 
+// Custom hook to access CompanyContext
 export const useCompany = () => useContext(CompanyContext);
 
-// Default export as a dummy component to prevent Next.js page-related error
+// Export default component (optional as it doesn't render anything)
 const CompanyContextPage = () => null;
 export default CompanyContextPage;
