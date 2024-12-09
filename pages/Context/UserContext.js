@@ -1,27 +1,26 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import supabase from '../../Lib/supabase';
 
-// Create the context for user
 const UserContext = createContext();
 
-// Custom hook to use the user context
 export const useUser = () => useContext(UserContext);
 
-export const UserProvider = ({ children }) => {
+const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);  // State to track loading status
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error || !session) {
-        setLoading(false); // Not authenticated
+        setLoading(false);
         return;
       }
       setUser({
         name: session.user.user_metadata.name,
         email: session.user.email,
         profilePicture: session.user.user_metadata.avatar_url,
+        username: session.user.user_metadata.username, // Add username here
       });
       setLoading(false);
     };
@@ -34,35 +33,33 @@ export const UserProvider = ({ children }) => {
           name: session.user.user_metadata.name,
           email: session.user.email,
           profilePicture: session.user.user_metadata.avatar_url,
+          username: session.user.user_metadata.username, // Add username here
         });
       } else {
-        setUser(null); // Reset user on logout
+        setUser(null);
       }
     });
 
-    // Cleanup the listener
     return () => {
       if (subscription) {
-        subscription.unsubscribe(); // Correctly call unsubscribe on the subscription object
+        subscription.unsubscribe();
       }
     };
   }, []);
 
-  // Log out function to sign out the user
   const logOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error('Error logging out:', error.message);
     } else {
-      setUser(null);  // Reset user state on logout
+      setUser(null);
     }
   };
 
-  // Function to update user data
   const updateUser = (userData) => {
     setUser((prevUser) => ({
       ...prevUser,
-      ...userData, // Merge previous user data with new data
+      ...userData,
     }));
   };
 
@@ -72,3 +69,5 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
+export default UserProvider; 
