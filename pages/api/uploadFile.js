@@ -1,6 +1,7 @@
 import supabase from '../../Lib/supabase'; // Import the Supabase client
 import multiparty from 'multiparty';
 import fs from 'fs';
+import path from 'path';  // Importing path module for safer file paths
 
 export const config = {
   api: {
@@ -21,8 +22,9 @@ export default async function handler(req, res) {
       const userId = fields.userId ? fields.userId[0] : 'anonymous'; 
       const fileBuffer = fs.readFileSync(file.path);
 
-      // Set the file path (with userId) for storage in Supabase
-      const filePath = `RequirementFiles/${userId}/${file.originalFilename}`;
+      // Sanitize the file name and ensure the file path is safe
+      const sanitizedFileName = file.originalFilename.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const filePath = `RequirementFiles/${userId}/${sanitizedFileName}`;
 
       // Upload the file to Supabase Storage
       const { data, error } = await supabase
@@ -39,12 +41,17 @@ export default async function handler(req, res) {
       }
 
       // Get the public URL for the uploaded file
-      const publicUrl = supabase
+      const { publicURL, error: urlError } = supabase
         .storage
         .from('requirements')
-        .getPublicUrl(filePath).publicURL;
+        .getPublicUrl(filePath);
 
-      return res.status(200).json({ success: true, fileUrl: publicUrl });
+      if (urlError) {
+        console.error('Error getting public URL:', urlError);
+        return res.status(500).json({ success: false, error: urlError.message });
+      }
+
+      return res.status(200).json({ success: true, fileUrl: publicURL });
     } catch (error) {
       console.error('Error uploading file:', error);
       return res.status(500).json({ success: false, error: error.message });
