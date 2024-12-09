@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '../Context/UserContext';
-import styles from '../../styles/UploadRequirement.module.css'; 
+import styles from '../../styles/UploadRequirement.module.css';
 
 const UploadRequirements = () => {
   const [files, setFiles] = useState({});
@@ -45,18 +45,19 @@ const UploadRequirements = () => {
     router.push('/Views/MainUI');
   };
 
+  const handleMoaValidationClick = () => {
+    router.push('/Views/MoaValidation');
+  };
+
   useEffect(() => {
-    // Prevent any mismatches during SSR
   }, []);
 
   if (!user) {
-    // Prevent rendering until the user context is available
-    return null; 
+    return null;
   }
 
   return (
     <div className={styles.container}>
-      {/* Header bar with Back button */}
       <div className={styles.headerBar}>
         <div className={styles.leftHeaderContent}>
           <div className={styles.profile}>
@@ -100,6 +101,12 @@ const UploadRequirements = () => {
             {uploading && <div className={styles.uploadingIndicator}>Uploading...</div>}
           </div>
         ))}
+      </div>
+
+      <div className={styles.footer}>
+        <button className={styles.moaValidationButton} onClick={handleMoaValidationClick}>
+          MOA Validation
+        </button>
       </div>
     </div>
   );

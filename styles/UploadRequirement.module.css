@@ -148,3 +148,37 @@
 .label {
     margin-right: 10px;
 }
+
+.footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .moaValidationButton {
+    background-color: #505050; /* Match the color of your other buttons */
+    color: white;
+    border: none;
+    width: 100px; /* Square design */
+    height: 100px; /* Square design */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px; /* Slightly rounded corners for consistency */
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+    transition: transform 0.2s, background-color 0.2s; /* Smooth hover effect */
+  }
+  
+  .moaValidationButton:hover {
+    background-color: #000000; /* Darker blue for hover effect */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+  }
+  
+  .moaValidationButton:active {
+    transform: scale(0.95); /* Shrink slightly on click */
+  }
+  
