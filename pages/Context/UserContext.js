@@ -1,26 +1,26 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import supabase from '../../Lib/supabase';
 
+// Create the context for user
 const UserContext = createContext();
 
 export const useUser = () => useContext(UserContext);
 
-const UserProvider = ({ children }) => {
+export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const fetchSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error || !session) {
-        setLoading(false);
+        setLoading(false); 
         return;
       }
       setUser({
         name: session.user.user_metadata.name,
         email: session.user.email,
         profilePicture: session.user.user_metadata.avatar_url,
-        username: session.user.user_metadata.username, // Add username here
       });
       setLoading(false);
     };
@@ -33,7 +33,6 @@ const UserProvider = ({ children }) => {
           name: session.user.user_metadata.name,
           email: session.user.email,
           profilePicture: session.user.user_metadata.avatar_url,
-          username: session.user.user_metadata.username, // Add username here
         });
       } else {
         setUser(null);
@@ -42,7 +41,7 @@ const UserProvider = ({ children }) => {
 
     return () => {
       if (subscription) {
-        subscription.unsubscribe();
+        subscription.unsubscribe(); 
       }
     };
   }, []);
@@ -52,14 +51,15 @@ const UserProvider = ({ children }) => {
     if (error) {
       console.error('Error logging out:', error.message);
     } else {
-      setUser(null);
+      setUser(null); 
     }
   };
 
+  // Function to update user data
   const updateUser = (userData) => {
     setUser((prevUser) => ({
       ...prevUser,
-      ...userData,
+      ...userData, 
     }));
   };
 
@@ -70,4 +70,4 @@ const UserProvider = ({ children }) => {
   );
 };
 
-export default UserProvider; 
+export default UserProvider;

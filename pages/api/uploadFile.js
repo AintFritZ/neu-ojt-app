@@ -1,10 +1,10 @@
-import { put } from '@vercel/blob';
+import supabase from '../../Lib/supabase'; // Import the Supabase client
 import multiparty from 'multiparty';
 import fs from 'fs';
 
 export const config = {
   api: {
-    bodyParser: false, // Disable built-in bodyParser to handle file streams
+    bodyParser: false, 
   },
 };
 
@@ -17,21 +17,34 @@ export default async function handler(req, res) {
         return res.status(400).json({ success: false, message: 'No file uploaded' });
       }
 
-      const file = files.file[0]; // Get the first file in the array
-      const userId = fields.userId ? fields.userId[0] : 'anonymous'; // Use userId from fields, fallback to 'anonymous'
-
-      // Read the file from the uploaded path
+      const file = files.file[0]; 
+      const userId = fields.userId ? fields.userId[0] : 'anonymous'; 
       const fileBuffer = fs.readFileSync(file.path);
 
-      // Define the file path, including the user-specific folder
-      const blobPath = `RequirementFiles/${userId}/${file.originalFilename}`;
+      // Set the file path (with userId) for storage in Supabase
+      const filePath = `RequirementFiles/${userId}/${file.originalFilename}`;
 
-      // Upload the file to Vercel Blob
-      const blob = await put(blobPath, fileBuffer, {
-        access: 'public',
-      });
+      // Upload the file to Supabase Storage
+      const { data, error } = await supabase
+        .storage
+        .from('requirements') // Specify the bucket name
+        .upload(filePath, fileBuffer, {
+          cacheControl: '3600',
+          upsert: true,
+        });
 
-      return res.status(200).json({ success: true, blobUrl: blob.url });
+      if (error) {
+        console.error('Error uploading file:', error);
+        return res.status(500).json({ success: false, error: error.message });
+      }
+
+      // Get the public URL for the uploaded file
+      const publicUrl = supabase
+        .storage
+        .from('requirements')
+        .getPublicUrl(filePath).publicURL;
+
+      return res.status(200).json({ success: true, fileUrl: publicUrl });
     } catch (error) {
       console.error('Error uploading file:', error);
       return res.status(500).json({ success: false, error: error.message });
@@ -47,9 +60,9 @@ const parseForm = (req) => {
 
     form.parse(req, (err, fields, files) => {
       if (err) {
-        reject(err); // Reject the promise if an error occurs
+        reject(err); 
       } else {
-        resolve({ fields, files }); // Resolve with fields and files
+        resolve({ fields, files });
       }
     });
   });
