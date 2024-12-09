@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import '../pages/index.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { UserProvider } from '../pages/Context/UserContext';
+import UserProvider from '../pages/Context/UserContext';
 import { CompanyProvider } from '../pages/Context/CompanyContext';
 
 function MyApp({ Component, pageProps }) {
