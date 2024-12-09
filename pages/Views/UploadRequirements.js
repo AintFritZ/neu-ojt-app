@@ -11,10 +11,10 @@ const UploadRequirements = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (user && user.id) {
+    if (user) {
       fetchFiles(user.id);
     }
-  }, [user]);  // This runs when user changes
+  }, [user]);
 
   const fetchFiles = async (userId) => {
     const { data, error } = await supabase
@@ -29,7 +29,7 @@ const UploadRequirements = () => {
       data.forEach((file) => {
         filesData[file.file_name] = { file_name: file.file_name, file_url: file.file_url };
       });
-      setFiles(filesData);  // Update state with fetched files
+      setFiles(filesData);
     }
   };
 
@@ -43,7 +43,6 @@ const UploadRequirements = () => {
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('userId', user.id); 
 
         const response = await fetch('/api/uploadFile', {
           method: 'POST',
@@ -52,7 +51,7 @@ const UploadRequirements = () => {
         const data = await response.json();
 
         if (data.success) {
-          const fileUrl = data.fileUrl; // Now use Supabase URL from backend
+          const fileUrl = `${data.blobUrl}/${filePath}`;
           await addFileToSupabase(user.id, file.name, fileUrl);
           setFiles((prevFiles) => ({
             ...prevFiles,

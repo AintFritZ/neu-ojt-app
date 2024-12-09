@@ -1,57 +1,29 @@
-import supabase from '../../Lib/supabase'; // Import the Supabase client
-import multiparty from 'multiparty';
-import fs from 'fs';
-import path from 'path';  // Importing path module for safer file paths
+import { put } from '@vercel/blob';  
+import multiparty from 'multiparty';  
 
 export const config = {
   api: {
-    bodyParser: false, 
+    bodyParser: false,  // Disable default body parser
   },
 };
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { files, fields } = await parseForm(req);
+      // Parse the incoming form data (file upload)
+      const formData = await parseForm(req);
 
-      if (!files || !files.file || files.file.length === 0) {
+      if (!formData.file || formData.file.length === 0) {
         return res.status(400).json({ success: false, message: 'No file uploaded' });
       }
 
-      const file = files.file[0]; 
-      const userId = fields.userId ? fields.userId[0] : 'anonymous'; 
-      const fileBuffer = fs.readFileSync(file.path);
+      const file = formData.file[0]; 
 
-      // Sanitize the file name and ensure the file path is safe
-      const sanitizedFileName = file.originalFilename.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-      const filePath = `RequirementFiles/${userId}/${sanitizedFileName}`;
+      // Upload the file directly to Vercel Blob
+      const blob = await put(`RequirementFiles/${file.originalFilename}`, file.path, { access: 'public' });
 
-      // Upload the file to Supabase Storage
-      const { data, error } = await supabase
-        .storage
-        .from('requirements') // Specify the bucket name
-        .upload(filePath, fileBuffer, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-
-      if (error) {
-        console.error('Error uploading file:', error);
-        return res.status(500).json({ success: false, error: error.message });
-      }
-
-      // Get the public URL for the uploaded file
-      const { publicURL, error: urlError } = supabase
-        .storage
-        .from('requirements')
-        .getPublicUrl(filePath);
-
-      if (urlError) {
-        console.error('Error getting public URL:', urlError);
-        return res.status(500).json({ success: false, error: urlError.message });
-      }
-
-      return res.status(200).json({ success: true, fileUrl: publicURL });
+      // Respond with the URL of the uploaded file
+      return res.status(200).json({ success: true, blobUrl: blob.url });
     } catch (error) {
       console.error('Error uploading file:', error);
       return res.status(500).json({ success: false, error: error.message });
@@ -61,15 +33,18 @@ export default async function handler(req, res) {
   }
 }
 
+// Helper function to parse the incoming form data (file upload)
 const parseForm = (req) => {
   return new Promise((resolve, reject) => {
-    const form = new multiparty.Form({ keepExtensions: true });
+    const form = new multiparty.Form();  // Initialize multiparty form parser
+    form.keepExtensions = true;  // Retain file extensions
 
+    // Parse the incoming request
     form.parse(req, (err, fields, files) => {
       if (err) {
-        reject(err); 
+        reject(err);  // Reject if errors during parsing
       } else {
-        resolve({ fields, files });
+        resolve(files);  // Resolve with parsed files
       }
     });
   });
