@@ -74,13 +74,14 @@
 
 .backButton {
     background-color: #505050;
-    color: rgb(248, 248, 248);
+    color: white;
     border: none;
+    padding: 8px 16px;
     border-radius: 5px;
-    padding: 5px 10px;
-    font-size: 1rem;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.1s;
+    margin: 10px 0;
+    transition: background-color 0.3s ease;
 }
 
 .backButton:hover {
@@ -90,13 +91,13 @@
 
 .boxContainer {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr); 
     gap: 20px;
     width: 100%;
     max-width: 800px;
     margin-top: 20px;
-    justify-content: center;
-    overflow: hidden;
+    justify-items: center;
+    text-align: center;
 }
 
 .box {
@@ -104,24 +105,36 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100px;
+    height: 150px;
     background-color: #505050;
     color: rgb(255, 255, 255);
     font-size: 18px;
     font-weight: bold;
     border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s;
-    margin-bottom: 20px;
-    padding: 10px;
+    transition: background-color 0.2s ease 0.2s, transform 0.2s ease 0.2s;
     text-align: center;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    padding: 10px;
+    width: 100%;
+    max-width: 350px;
+    box-sizing: border-box;
 }
 
-.box:hover {
-    background-color: #000000;
+.label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.fileName {
+    font-size: 14px;
+    font-weight: normal;
+    color: #ccc;
+    word-wrap: break-word;
+    text-align: center;
+    margin-top: 5px;
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 
 .uploadBox {
@@ -153,14 +166,15 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    position: relative;
+    width: 100%;
+    bottom: 20px;
 }
 
 .moaValidationButton {
     background-color: #505050;
     color: white;
     border: none;
-    width: 100px;
-    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,6 +185,12 @@
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, background-color 0.2s;
+    margin-top: 20px;
+    height: 75px; 
+    width: 100%; 
+    max-width: 350px; 
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .moaValidationButton:hover {
@@ -180,4 +200,41 @@
 
 .moaValidationButton:active {
     transform: scale(0.95);
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.uploadButton {
+    background-color: #222222;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.uploadButton:hover {
+    background-color: #999999;
+}
+
+.viewButton {
+    background-color: #222222;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.viewButton:hover {
+    background-color: #999999;
 }

@@ -113,7 +113,12 @@
   font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.2s ease 0.2s, transform 0.2s ease 0.2s;
+}
+
+.box:hover {
+  background-color: #333333; 
+  transform: scale(1.05); 
 }
 
 .formWrapper {

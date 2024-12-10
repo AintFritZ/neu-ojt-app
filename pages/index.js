@@ -20,7 +20,7 @@ const LoginPage = () => {
 
       if (session) {
         setUser({
-          id: session.user.id, // Include user ID in the context
+          id: session.user.id,
           name: session.user.user_metadata.name,
           email: session.user.email,
           profilePicture: session.user.user_metadata.avatar_url,
@@ -40,7 +40,6 @@ const LoginPage = () => {
     if (userData) {
       const { name, email, picture } = userData;
 
-      // Check if the user exists in Supabase
       const { data, error } = await supabase
         .from('users')
         .select('id')
@@ -48,26 +47,23 @@ const LoginPage = () => {
         .single();
 
       if (error || !data) {
-        // If the user does not exist, insert the user into the database
         const { error: insertError, data: insertedUser } = await supabase
           .from('users')
           .insert([{ email, name, profile_picture: picture }])
-          .single(); // Ensures only one user is returned
+          .single(); 
 
         if (insertError) {
           console.error('Error inserting user into Supabase:', insertError.message);
           return;
         }
 
-        // After insertion, use the returned `id`
         setUser({
-          id: insertedUser.id,  // Set the user ID from the inserted data
+          id: insertedUser.id,  
           name,
           email,
           profilePicture: picture,
         });
       } else {
-        // If the user exists, update their information
         const { error: updateError } = await supabase
           .from('users')
           .update({ name, profile_picture: picture })
@@ -78,9 +74,8 @@ const LoginPage = () => {
           return;
         }
 
-        // Set the user information in the context, including the ID
         setUser({
-          id: data.id,  // Use the existing user ID
+          id: data.id,  
           name,
           email,
           profilePicture: picture,
@@ -99,7 +94,7 @@ const LoginPage = () => {
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
       <div className="container">
         <div className="card">
-          <h1>Login with School Email</h1>
+          <h1>Login with University Email</h1>
           <LogInButton
             className="login-button"
             onSuccess={handleLoginSuccess}

@@ -100,7 +100,12 @@ const UpdateCompany = () => {
 
       console.log('Company deleted');
       deleteCompany();
-      router.push('/Views/MainUI');
+      
+      setFormData({
+        companyName: '',
+        companyAddress: '',
+        companyContact: '',
+      });
     } catch (error) {
       console.error('Error deleting company:', error.message);
     }

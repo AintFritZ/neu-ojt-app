@@ -27,7 +27,7 @@ const UploadRequirements = () => {
     } else {
       const filesData = {};
       data.forEach((file) => {
-        filesData[file.file_name] = { file_name: file.file_name, file_url: file.file_url };
+        filesData[file.id] = { file_name: file.file_name, file_url: file.file_url };
       });
       setFiles(filesData);
     }
@@ -38,26 +38,28 @@ const UploadRequirements = () => {
     if (file && file.type === 'application/pdf') {
       setUploading(true);
       try {
-        const formData = new FormData();
-        formData.append('file', file);
+        const fileName = file.name;
+        const { data, error } = await supabase.storage
+          .from('requirements')
+          .upload(`RequirementFiles/${user.id}/${fileName}`, file, {
+            contentType: file.type,
+            upsert: true,
+          });
 
-        const response = await fetch('/api/uploadFile', {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await response.json();
-
-        if (data.success) {
-          const fileUrl = data.blobUrl;
-
-          await addFileToSupabase(user.id, file.name, fileUrl, key);
-          setFiles((prevFiles) => ({
-            ...prevFiles,
-            [key]: { file_name: file.name, file_url: fileUrl },
-          }));
-        } else {
-          alert('File upload failed.');
+        if (error) {
+          throw error;
         }
+
+        const fileUrl = `https://ncvlhbaeyxtzdfketglj.supabase.co/storage/v1/object/public/requirements/RequirementFiles/${user.id}/${fileName}`;
+
+        await addFileToSupabase(user.id, fileName, fileUrl, key);
+
+        await fetchFiles(user.id);
+        
+        setFiles((prevFiles) => ({
+          ...prevFiles,
+          [key]: { file_name: fileName, file_url: fileUrl },
+        }));
       } catch (error) {
         alert('Error uploading file: ' + error.message);
       } finally {
@@ -67,7 +69,7 @@ const UploadRequirements = () => {
       alert('Please upload a valid PDF file.');
     }
   };
-
+  
   const addFileToSupabase = async (userId, fileName, fileUrl, key) => {
     const fileIds = {
       'Parents Consent': 1,
@@ -94,6 +96,14 @@ const UploadRequirements = () => {
       console.error('Error adding file to Supabase:', error);
     } else {
       console.log('File metadata added/updated in Supabase:', data);
+    }
+  };
+
+  const handleViewFile = (fileUrl) => {
+    if (fileUrl) {
+      window.open(fileUrl, '_blank');
+    } else {
+      alert('No file to view.');
     }
   };
 
@@ -128,32 +138,45 @@ const UploadRequirements = () => {
         <div className={styles.centerHeaderContent}>
           <h1 className={styles.headingTitle}>Upload Requirements</h1>
         </div>
-
         <button className={styles.backButton} onClick={handleBackClick}>
           Back to Main UI
         </button>
       </div>
 
       <div className={styles.boxContainer}>
-        {['Parents Consent', 'Medical Exam', 'Psychological Exam', 'Resume'].map((label) => (
-          <div className={styles.box} key={label}>
-            <span className={styles.label}>{label}:</span>
-            <label htmlFor={`fileInput-${label}`} className={styles.uploadBox}>
-              {files[label] ? files[label].file_name : 'Click to Upload'}
-            </label>
-            <input
-              id={`fileInput-${label}`}
-              type="file"
-              accept="application/pdf"
-              style={{ display: 'none' }}
-              onChange={(e) => handleFileUpload(e, label)}
-            />
-            {files[label] && (
-              <span className={styles.fileName}> - {files[label].file_name}</span>
-            )}
-            {uploading && <div className={styles.uploadingIndicator}>Uploading...</div>}
-          </div>
-        ))}
+        {['Parents Consent', 'Medical Exam', 'Psychological Exam', 'Resume'].map((label, index) => {
+          const fileId = index + 1;
+          const file = files[fileId];
+
+          return (
+            <div className={styles.box} key={label}>
+              <span className={styles.label}>{label}</span>
+              {file && <span className={styles.fileName}>{file.file_name}</span>}
+              <div className={styles.actions}>
+                <button
+                  className={styles.uploadButton}
+                  onClick={() => document.getElementById(`fileInput-${label}`).click()}
+                >
+                  Upload
+                </button>
+                <button
+                  className={styles.viewButton}
+                  onClick={() => handleViewFile(file?.file_url)}
+                >
+                  View
+                </button>
+                <input
+                  id={`fileInput-${label}`}
+                  type="file"
+                  accept="application/pdf"
+                  style={{ display: 'none' }}
+                  onChange={(e) => handleFileUpload(e, label)}
+                />
+              </div>
+              {uploading && <div className={styles.uploadingIndicator}>Uploading...</div>}
+            </div>
+          );
+        })}
       </div>
 
       <div className={styles.footer}>
