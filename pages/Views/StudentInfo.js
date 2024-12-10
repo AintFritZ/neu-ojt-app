@@ -3,10 +3,10 @@ import { useUser } from '../Context/UserContext';
 import styles from '../../styles/StudentInfo.module.css';
 import { useRouter } from 'next/router';
 import { semesterOptions, generateSchoolYearOptions, courseOptions } from '../../Lib/Options';
-import supabase from '../../Lib/supabase'; // Import Supabase client
+import supabase from '../../Lib/supabase';
 
 const StudentInfo = () => {
-  const { user, updateUser } = useUser(); // Retrieve the user data from context
+  const { user, updateUser } = useUser();
   const [formData, setFormData] = useState({
     lastname: '',
     firstname: '',
@@ -18,10 +18,9 @@ const StudentInfo = () => {
     schoolyear: '',
     semester: '',
   });
-  const [loading, setLoading] = useState(true); // Loading state for fetching user data
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Fetch session and user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user?.id) {
@@ -29,11 +28,10 @@ const StudentInfo = () => {
         return;
       }
 
-      // Fetch user-specific data from Supabase if the user exists
       const { data, error } = await supabase
         .from('usersinfo')
         .select('*')
-        .eq('id', user.id)  // Use the user context data if available
+        .eq('id', user.id)
         .single();
 
       if (error) {
@@ -60,30 +58,26 @@ const StudentInfo = () => {
     };
 
     fetchUserData();
-  }, [user]); // Run the effect whenever the user context changes
+  }, [user]); 
 
-  // Handle changes in the form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle form submission (update user data in Supabase)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Ensure that user.id exists before submitting
     if (!user?.id) {
       console.error('User ID is missing!');
-      return; // Do not proceed with submission if the user ID is unavailable
+      return; 
     }
 
-    // Update data in Supabase using user.id as the ID
     try {
       const { data, error } = await supabase
         .from('usersinfo')
         .upsert([{
-          id: user.id,  // Use user.id directly
+          id: user.id,
           lastname: formData.lastname,
           firstname: formData.firstname,
           middlename: formData.middlename,
@@ -103,7 +97,6 @@ const StudentInfo = () => {
 
       console.log('User saved:', data);
 
-      // Update the user context
       updateUser(formData);
       console.log('User context updated');
     } catch (error) {
@@ -115,7 +108,7 @@ const StudentInfo = () => {
     router.push('/Views/MainUI');
   };
 
-  if (loading) return <div>Loading...</div>; // Show loading text while data is fetched
+  if (loading) return <div>Loading...</div>; 
 
   return (
     <div className={styles.container}>

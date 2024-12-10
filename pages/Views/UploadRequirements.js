@@ -38,9 +38,6 @@ const UploadRequirements = () => {
     if (file && file.type === 'application/pdf') {
       setUploading(true);
       try {
-        const folderPath = `users/${user.username}/`;
-        const filePath = folderPath + file.name;
-
         const formData = new FormData();
         formData.append('file', file);
 
@@ -51,8 +48,9 @@ const UploadRequirements = () => {
         const data = await response.json();
 
         if (data.success) {
-          const fileUrl = `${data.blobUrl}/${filePath}`;
-          await addFileToSupabase(user.id, file.name, fileUrl);
+          const fileUrl = data.blobUrl;
+
+          await addFileToSupabase(user.id, file.name, fileUrl, key);
           setFiles((prevFiles) => ({
             ...prevFiles,
             [key]: { file_name: file.name, file_url: fileUrl },
@@ -70,19 +68,32 @@ const UploadRequirements = () => {
     }
   };
 
-  const addFileToSupabase = async (userId, fileName, fileUrl) => {
+  const addFileToSupabase = async (userId, fileName, fileUrl, key) => {
+    const fileIds = {
+      'Parents Consent': 1,
+      'Medical Exam': 2,
+      'Psychological Exam': 3,
+      'Resume': 4,
+    };
+
+    const fileId = fileIds[key];
+
     const { data, error } = await supabase
       .from('files')
-      .insert([{
-        user_id: userId,
-        file_name: fileName,
-        file_url: fileUrl,
-      }]);
+      .upsert(
+        {
+          id: fileId,
+          user_id: userId,
+          file_name: fileName,
+          file_url: fileUrl,
+        },
+        { onConflict: ['id', 'user_id'] }
+      );
 
     if (error) {
       console.error('Error adding file to Supabase:', error);
     } else {
-      console.log('File metadata added to Supabase:', data);
+      console.log('File metadata added/updated in Supabase:', data);
     }
   };
 
